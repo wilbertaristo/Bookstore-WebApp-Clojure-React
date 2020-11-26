@@ -22,3 +22,35 @@ body {
 .login-image-container h1 {
     font-family: 'Bellota';
 }
+
+.book-covers:hover {
+    cursor: pointer;
+}
+
+.site-layout-content {
+    min-height: 280px;
+    background: #f0f2f5;
+}
+
+.layout {
+    background-color: #f0f2f5;
+}
+
+.ant-table {
+    background-color: #fff;
+}
+
+.inline-filter {
+    width: 100%;
+    margin-bottom: 0.2%;
+    display: flex;
+    align-content: space-evenly;
+}
+
+.filter-inputs .ant-form-item-label {
+    height: 35px;
+}
+
+.filter-inputs .ant-form-item {
+    margin-bottom: 0;
+}

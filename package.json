@@ -4,6 +4,7 @@
     "webpack-cli": "^3.3.11"
   },
   "dependencies": {
+    "antd": "^3.26.17",
     "npx": "^10.2.2",
     "react": "^16.13.1",
     "react-dom": "^16.13.1"

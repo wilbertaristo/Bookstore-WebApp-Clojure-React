@@ -10,6 +10,8 @@
                  [org.clojure/clojurescript "1.10.773"]
                  [org.clojure/core.async  "0.4.500"]
                  [reagent "0.10.0"]
+                 [re-frame "1.1.2"]
+                 [day8.re-frame/re-frame-10x "0.7.0"]
                  [antizer "0.3.1"]]
 
   :plugins [[lein-figwheel "0.5.20"]

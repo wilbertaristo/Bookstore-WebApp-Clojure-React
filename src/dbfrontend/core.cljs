@@ -2,6 +2,7 @@
     (:require 
               [reagent.core :as reagent]
               [reagent.dom :as rd]
+              [re-frame.core :as rf]
               [dbfrontend.library :as library]
               [dbfrontend.login :as login]
               [dbfrontend.resetpassword :as resetpassword]
@@ -18,6 +19,8 @@
 
 (defn render [page]
   (rd/render [page] (. js/document (getElementById "app"))))
+
+(defonce start-library (do (rf/dispatch-sync [:initialize]) true))
 
 (render library/render)
 

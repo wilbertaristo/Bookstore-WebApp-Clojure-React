@@ -53,4 +53,5 @@ body {
 
 .filter-inputs .ant-form-item {
     margin-bottom: 0;
+    width: 25%;
 }

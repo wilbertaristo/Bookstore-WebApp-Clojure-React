@@ -16,6 +16,7 @@
            (get (js->clj data2 :keywordize-keys true) field)))
 
 (defn genre-display [genres]
+  (.sort genres)
   (for [i (range (count genres))] (reagent/as-element [ant/tag {:key (aget genres i)} (aget genres i)])))
 
 (defn review-display [review]
@@ -28,8 +29,8 @@
    ]
   )
 
-(defn getColumnSearchProps [dataIndex]
-  )
+(defn action-display [asin]
+  [:a {:href (str "/view-book?asin=" asin)} "Write a review"])
 
 (def description
   "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Aliquam ultrices sagittis orci a scelerisque. Libero volutpat sed cras ornare arcu dui vivamus arcu felis. Erat nam at lectus urna duis convallis. Arcu ac tortor dignissim convallis aenean et tortor. Amet mauris commodo quis imperdiet massa tincidunt nunc pulvinar. Lectus nulla at volutpat diam ut. Elementum tempus egestas sed sed risus pretium quam. Sit amet venenatis urna cursus eget nunc scelerisque viverra. Sem et tortor consequat id.
@@ -41,7 +42,9 @@
               {:title "Author" :dataIndex "author" :sorter #(comparison %1 %2 :author)}
               {:title "Title" :dataIndex "title" :sorter #(comparison %1 %2 :title)}
               {:title "Genre" :dataIndex "genre" :render #(reagent/as-element (genre-display %))}
-              {:title "Review" :dataIndex "review" :sorter #(comparison %1 %2 :review) :render #(reagent/as-element (review-display %))}])
+              {:title "Review" :dataIndex "review" :sorter #(comparison %1 %2 :review) :render #(reagent/as-element (review-display %))}
+              {:title "Action" :dataIndex "asin" :render #(reagent/as-element (action-display %))}
+              ])
 
 (def books [{:id 1 :asin 12345 :image "https://zos.alipayobjects.com/rmsportal/jkjgkEfvpUPVyRjUImniVslZfWPnJuuZ.png" :author "Tracey Davidson" :title "Paris In The Rain" :genre ["Romance" "Horror"] :review 5 :description description}
              {:id 2 :asin 12345 :image "https://zos.alipayobjects.com/rmsportal/jkjgkEfvpUPVyRjUImniVslZfWPnJuuZ.png" :author "Pierre de Wiles" :title "Phantom of The Penthouse" :genre ["Drama" "Sci-Fi"] :review 2.5 :description description}

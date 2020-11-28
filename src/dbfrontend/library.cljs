@@ -10,41 +10,6 @@
 
 (def random_book {:id 13 :asin 12345 :image "https://zos.alipayobjects.com/rmsportal/jkjgkEfvpUPVyRjUImniVslZfWPnJuuZ.png" :author "BANG JAGO" :title "AMPUN BANG" :genre ["Drama"] :review 2 :description "SORRY BANG JAGO AMPUN BANG JAGO"})
 
-(rf/reg-event-db
-  :initialize
-  (fn [_ _]
-  {:books tableutils/books :modal-state false :book-id 13}))
-
-(rf/reg-event-db
-  :add-book
- (fn [db [_ new-book]]
-  (assoc db :books (conj (db :books) new-book))))
-
-(rf/reg-event-db
-  :toggle-modal
- (fn [db]
-   (assoc db :modal-state (not (db :modal-state)))))
-
-(rf/reg-event-db
-  :increment-id
- (fn [db]
-   (update db :book-id inc)))
-
-(rf/reg-sub
-  :books
-  (fn [db _]
-   (:books db)))
-
-(rf/reg-sub
-  :modal-state
- (fn [db _]
-   (:modal-state db)))
-
-(rf/reg-sub
-  :book-id
- (fn [db _]
-   (:book-id db)))
-
 (defn render-nav-bar []
    [ant/layout-header {:class-name "d-flex align-items-center"}
     [:a {:href "/"}
@@ -52,38 +17,39 @@
      [:img {:src "sutdLogoWhite.png" :alt "SUTD LOGO" :class-name "menu-logo p-1"}]]
     [:div {:style {:width "90vw"}}]])
 
-(defn add-actions-column [columns data-atom]
-  (conj columns
-        {:title "Actions"
-         :render
-         #(reagent/as-element
-           [ant/button {:icon "delete" :type "danger"
-                        :on-click
-                        (fn []
-                          (reset! data-atom
-                                  (remove (fn [d] (= (get (js->clj %2) "id")
-                                                     (:id d))) @data-atom)))}])}))
-
 (defn datatable []
   (let [data (rf/subscribe [:books])]
     (fn []
       [:div
        [ant/table
-        {:columns (add-actions-column tableutils/columns data)
+        {:columns tableutils/columns
          :dataSource @data :pagination tableutils/pagination :row-key "id"
          }]])))
 
 (defn dispatch-addbook [errors values]
-  (def new-book values)
-  (aset values "genre" (.split (get (js->clj values) "genre") " "))
-  (aset values "id" @(rf/subscribe [:book-id]))
-  (aset values "asin" 12345)
-  (aset values "review" 0)
-  (println new-book)
-  (if (nil? errors)
-    (rf/dispatch [:add-book (js->clj new-book)]))
-  (rf/dispatch [:increment-id])
-  (rf/dispatch [:toggle-modal]))
+  (println (get @(rf/subscribe [:file-list]) 0))
+  (println values)
+;  (def new-book values)
+;  (aset values "genre" (.split (get (js->clj values) "genre") " "))
+;  (aset values "id" @(rf/subscribe [:book-id]))
+;  (aset values "asin" 12345)
+;  (aset values "review" 0)
+;  (println new-book)
+;  (if (nil? errors)
+;    (rf/dispatch [:add-book (js->clj new-book)]))
+;  (rf/dispatch [:increment-id])
+;  (rf/dispatch [:toggle-modal])
+  )
+
+(defn upload-image-button []
+  [ant/button {:icon "upload"} "Upload Book Cover Image"])
+
+(defn handle-book-upload-onremove []
+  (rf/dispatch [:update-file-list []]))
+
+(defn handle-book-before-upload [file]
+  (rf/dispatch [:update-file-list [file]])
+  false)
 
 (defn addbook-form []
   (fn [props]
@@ -96,15 +62,27 @@
        [ant/form-item
         (ant/decorate-field addbook-antform "author" {:rules [{:required true :message "Enter author!"}]}
                             [ant/input {:placeholder "Author"}])]
-       [ant/form-item
-        (ant/decorate-field addbook-antform "genre" {:rules [{:required true :message "Enter genre!"}]}
-                            [ant/input {:placeholder "Genre"}])]
+       [ant/input-group
+        [ant/col {:span 6}
+         [ant/form-item
+          (ant/decorate-field addbook-antform "genre1"
+                              [ant/input {:placeholder "Genre 1"}])]]
+        [ant/col {:span 6}
+         [ant/form-item
+          (ant/decorate-field addbook-antform "genre2"
+                              [ant/input {:placeholder "Genre 2"}])]]
+        [ant/col {:span 6}
+         [ant/form-item
+          (ant/decorate-field addbook-antform "genre3"
+                              [ant/input {:placeholder "Genre 3"}])]]
+        [ant/col {:span 6}
+         [ant/form-item
+          (ant/decorate-field addbook-antform "genre4"
+                              [ant/input {:placeholder "Genre 4"}])]]]
        [ant/form-item
         (ant/decorate-field addbook-antform "description" {:rules [{:required true :message "Enter description!"}]}
                             [ant/input {:placeholder "Description"}])]
-       [ant/form-item
-        (ant/decorate-field addbook-antform "image" {:rules [{:required true :message "Enter cover image!"}]}
-                            [ant/input {:placeholder "Cover Image"}])]
+       [ant/upload {:before-upload handle-book-before-upload :on-remove handle-book-upload-onremove :accept ".png,.jpeg,.jpg" :file-list @(rf/subscribe [:file-list]) :list-type "picture"} [upload-image-button]]
        [:div.d-flex.justify-content-end
         [ant/button {:type "primary" :html-type "submit" :size "large" :style {:margin-top "20px" :width "150px"}} "Add Book"]
        ]])))
@@ -114,30 +92,40 @@
 
 (defn addbook-modal []
   [ant/modal {:title "Add Book" :visible @(rf/subscribe [:modal-state])
-              :onOk #(rf/dispatch [:toggle-modal])
               :onCancel #(rf/dispatch [:toggle-modal])
-              :okButtonProps {:style {:display "none"}}
-              :cancelButtonProps {:style {:display "none"}}}
+              :footer nil}
    [render-addbook-form]])
 
-(defn dispatch-filterbook []
-  (println "HELLO"))
+(defn handle-onchange [e]
+  (def field-name (.-name (.-target e)))
+  (def field-value (.-value (.-target e)))
+  (cond
+    (= field-name "title") (rf/dispatch [:update-title-search field-value])
+    (= field-name "author") (rf/dispatch [:update-author-search field-value])
+    (= field-name "genre") (rf/dispatch [:update-genre-search field-value])
+    :else nil)
+  )
+
+(defn handle-search []
+  (println @(rf/subscribe [:title-search]))
+  (println @(rf/subscribe [:author-search]))
+  (println @(rf/subscribe [:genre-search]))
+  )
 
 (defn filter-form []
    (fn [props]
-     (let [filter-antform (ant/get-form)
-           submit-handler #(ant/validate-fields filter-antform dispatch-filterbook)]
-       [ant/form {:on-submit #(do (.preventDefault %) (submit-handler))}
+     (let [filter-antform (ant/get-form)]
+       [ant/form
         [:div.d-flex.flex-row.justify-content-around.filter-inputs
          [ant/form-item {:name "title" :label "Title" }
           (ant/decorate-field filter-antform "title"
-                              [ant/input {:placeholder "Title"}])]
+                              [ant/input-search {:name "title" :placeholder "Title" :enter-button true :on-change handle-onchange :on-search handle-search :on-press-enter handle-search}])]
          [ant/form-item {:name "title" :label "Author"}
           (ant/decorate-field filter-antform "author"
-                              [ant/input {:placeholder "Author"}])]
+                              [ant/input-search {:name "author" :placeholder "Author" :enter-button true :on-change handle-onchange :on-search handle-search :on-press-enter handle-search}])]
          [ant/form-item {:name "title" :label "Genre"}
           (ant/decorate-field filter-antform "genre"
-                              [ant/input {:placeholder "Genre"}])]]
+                              [ant/input-search {:name "genre" :placeholder "Genre" :enter-button true :on-change handle-onchange :on-search handle-search :on-press-enter handle-search}])]]
         ])))
 
 (defn render-filter-form []
@@ -165,4 +153,3 @@
       [addbook-modal]
       [datatable]]]
    ]])
-

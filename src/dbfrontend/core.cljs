@@ -1,15 +1,15 @@
 (ns dbfrontend.core
-    (:require 
-              [reagent.core :as reagent]
-              [reagent.dom :as rd]
-              [re-frame.core :as rf]
-              [dbfrontend.library :as library]
-              [dbfrontend.viewbook :as viewbook]
-              [dbfrontend.reframeevents :as reframe-events]
-              [dbfrontend.login :as login]
-              [dbfrontend.resetpassword :as resetpassword]
-              [dbfrontend.signup :as signup]
-              [dbfrontend.reviews :as reviews]))
+  (:require 
+   [reagent.core :as reagent]
+   [reagent.dom :as rd]
+   [re-frame.core :as rf]
+   [dbfrontend.library :as library]
+   [dbfrontend.viewbook :as viewbook]
+   [dbfrontend.reframe-events :as reframe-events]
+   [dbfrontend.login :as login]
+   [dbfrontend.resetpassword :as resetpassword]
+   [dbfrontend.signup :as signup]
+   [dbfrontend.reviews :as reviews]))
 
 (enable-console-print!)
 

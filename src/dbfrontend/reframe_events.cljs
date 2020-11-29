@@ -1,7 +1,7 @@
-(ns dbfrontend.reframeevents
+(ns dbfrontend.reframe-events
   (:require
-    [re-frame.core :as rf]
-    [dbfrontend.tableutils :as tableutils]))
+   [re-frame.core :as rf]
+   [dbfrontend.tableutils :as tableutils]))
 
 ;;;;;;;;;;;;;;;;;; INITIALIZE STATES ;;;;;;;;;;;;;;;;;;;;;;;;;;;
 (rf/reg-sub

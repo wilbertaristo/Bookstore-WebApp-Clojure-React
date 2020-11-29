@@ -15,6 +15,16 @@
    (:modal-state db)))
 
 (rf/reg-sub
+ :addreview-modal-state
+ (fn [db _]
+   (:addreview-modal-state db)))
+
+(rf/reg-sub
+ :recommendation-modal-state
+ (fn [db _]
+   (:recommendation-modal-state db)))
+
+(rf/reg-sub
  :book-id
  (fn [db _]
    (:book-id db)))
@@ -47,6 +57,8 @@
  (fn [_ _]
    {:books tableutils/books
     :modal-state false
+    :addreview-modal-state false
+    :recommendation-modal-state false
     :book-id 13
     :title-search ""
     :author-search ""
@@ -63,6 +75,16 @@
  :toggle-modal
  (fn [db]
    (assoc db :modal-state (not (db :modal-state)))))
+
+(rf/reg-event-db
+ :toggle-addreview-modal
+ (fn [db]
+   (assoc db :addreview-modal-state (not (db :addreview-modal-state)))))
+
+(rf/reg-event-db
+ :toggle-recommendation-modal
+ (fn [db]
+   (assoc db :recommendation-modal-state (not (db :recommendation-modal-state)))))
 
 (rf/reg-event-db
  :increment-id

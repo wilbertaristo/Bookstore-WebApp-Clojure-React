@@ -38,6 +38,8 @@
   Ultrices dui sapien eget mi proin. Sagittis aliquam malesuada bibendum arcu vitae elementum curabitur. Neque convallis a cras semper auctor neque vitae. Faucibus et molestie ac feugiat sed lectus vestibulum mattis ullamcorper. Viverra accumsan in nisl nisi scelerisque eu ultrices vitae auctor. Pharetra pharetra massa massa ultricies mi quis hendrerit dolor. Ut morbi tincidunt augue interdum velit euismod. Suspendisse ultrices gravida dictum fusce ut placerat orci. Et malesuada fames ac turpis. Nisl condimentum id venenatis a condimentum vitae. Consectetur libero id faucibus nisl.
   Velit euismod in pellentesque massa placerat duis ultricies. Orci eu lobortis elementum nibh tellus molestie. Urna et pharetra pharetra massa massa. Vitae congue mauris rhoncus aenean vel elit scelerisque. Sit amet porttitor eget dolor morbi non arcu risus quis. Sed elementum tempus egestas sed sed risus pretium quam vulputate. At auctor urna nunc id cursus metus aliquam. Molestie a iaculis at erat pellentesque adipiscing commodo elit. Velit aliquet sagittis id consectetur purus ut faucibus pulvinar. Nam libero justo laoreet sit. Integer enim neque volutpat ac tincidunt. Tellus elementum sagittis vitae et leo duis ut.")
 
+(def review-text "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Curabitur mollis tortor sem, at sagittis nunc eleifend vel. Mauris laoreet, odio nec mattis venenatis, mauris felis efficitur urna, et eleifend ipsum dui vel ligula. Fusce vitae scelerisque magna, a convallis odio. ")
+
 (def columns [{:title "Cover" :width 150 :dataIndex "image" :render #(reagent/as-element (cover-display % %2))}
               {:title "Author" :dataIndex "author" :sorter #(comparison %1 %2 :author)}
               {:title "Title" :dataIndex "title" :sorter #(comparison %1 %2 :title)}
@@ -58,3 +60,27 @@
              {:id 10 :asin 12345 :image "https://zos.alipayobjects.com/rmsportal/jkjgkEfvpUPVyRjUImniVslZfWPnJuuZ.png" :author "Adam Turing" :title "Hurricane Katrina" :genre ["Documentary"] :review 4.5 :description description}
              {:id 11 :asin 12345 :image "https://zos.alipayobjects.com/rmsportal/jkjgkEfvpUPVyRjUImniVslZfWPnJuuZ.png" :author "Willie Reynolds" :title "Don't Look Up" :genre ["Thriller"] :review 3 :description description}
              {:id 12 :asin 12345 :image "https://zos.alipayobjects.com/rmsportal/jkjgkEfvpUPVyRjUImniVslZfWPnJuuZ.png" :author "Zoe Cruz" :title "Club 33" :genre ["Drama"] :review 4 :description description}])
+
+(def reviews [{:avatar "https://zos.alipayobjects.com/rmsportal/ODTLcjxAfvqbxHnVXCYX.png", :overall 4, :summary "Well written Book", :reviewerName "Daryll Wong", :reviewText review-text, :unixReviewTime "1399038400"}
+              {:avatar "https://zos.alipayobjects.com/rmsportal/ODTLcjxAfvqbxHnVXCYX.png", :overall 3.5, :summary "It was okay", :reviewerName "Zachary Teo", :reviewText review-text, :unixReviewTime "1399038400"}
+              {:avatar "https://zos.alipayobjects.com/rmsportal/ODTLcjxAfvqbxHnVXCYX.png", :overall 5, :summary "Very good book", :reviewerName "Dana White", :reviewText review-text, :unixReviewTime "1399038400"}
+              {:avatar "https://zos.alipayobjects.com/rmsportal/ODTLcjxAfvqbxHnVXCYX.png", :overall 4.5, :summary "Get a copy!", :reviewerName "Sam Ojer", :reviewText review-text, :unixReviewTime "1399038400"}
+              {:avatar "https://zos.alipayobjects.com/rmsportal/ODTLcjxAfvqbxHnVXCYX.png", :overall 2, :summary "Underwhelming", :reviewerName "Hakeem Olajuwon", :reviewText review-text, :unixReviewTime "1399038400"}
+              {:avatar "https://zos.alipayobjects.com/rmsportal/ODTLcjxAfvqbxHnVXCYX.png", :overall 4, :summary "Very insightful book", :reviewerName "Kobe Bryant", :reviewText review-text, :unixReviewTime "1399038400"}
+              {:avatar "https://zos.alipayobjects.com/rmsportal/ODTLcjxAfvqbxHnVXCYX.png", :overall 3, :summary "It's mediocre", :reviewerName "James Song", :reviewText review-text, :unixReviewTime "1399038400"}
+              {:avatar "https://zos.alipayobjects.com/rmsportal/ODTLcjxAfvqbxHnVXCYX.png", :overall 3.5, :summary "Not bad", :reviewerName "Kim Dae Woon", :reviewText review-text, :unixReviewTime "1399038400"}
+              {:avatar "https://zos.alipayobjects.com/rmsportal/ODTLcjxAfvqbxHnVXCYX.png", :overall 2.5, :summary "Not really good", :reviewerName "Son Jung", :reviewText review-text, :unixReviewTime "1399038400"}
+              {:avatar "https://zos.alipayobjects.com/rmsportal/ODTLcjxAfvqbxHnVXCYX.png", :overall 5, :summary "Book of the century", :reviewerName "Peter Smith", :reviewText review-text, :unixReviewTime "1399038400"}
+              ])
+
+(def image-urls [{:asin 12345 :imurl "https://d1csarkz8obe9u.cloudfront.net/posterpreviews/contemporary-fiction-night-time-book-cover-design-template-1be47835c3058eb42211574e0c4ed8bf_screen.jpg?ts=1594616847"}
+                 {:asin 12312 :imurl "https://static-cse.canva.com/blob/142533/Red-and-Beige-Cute-Illustration-Young-Adult-Book-Cover.jpg"}
+                 {:asin 11145 :imurl "https://www.designforwriters.com/wp-content/uploads/2017/10/design-for-writers-book-cover-tf-2-a-million-to-one.jpg"}
+                 {:asin 14242 :imurl "https://marketplace.canva.com/EAD7YH8bebE/1/0/251w/canva-white-bold-text-thriller-mystery-book-cover-CejxvxrTCyg.jpg"}
+                 {:asin 13512 :imurl "https://marketplace.canva.com/EAD7WdjmU7I/1/0/251w/canva-wolf-eye-photo-thriller-mystery-book-cover-Zj3QkObDyKs.jpg"}
+                 {:asin 12332 :imurl "https://www.designwizard.com/wp-content/uploads/2019/07/20-Conviction-Kelly-Loy-Gilbert-Book-Cover-Ideas.jpg"}
+                 {:asin 15321 :imurl "https://marketplace.canva.com/EAD7WVju_K0/1/0/251w/canva-red-and-black-outline-romance-chick-lit-book-cover-v3hygqoyuXc.jpg"}
+                 {:asin 11423 :imurl "https://bukovero.com/wp-content/uploads/2016/07/Harry_Potter_and_the_Cursed_Child_Special_Rehearsal_Edition_Book_Cover.jpg"}
+                 {:asin 13412 :imurl "https://e3t6q7b4.stackpathcdn.com/wp-content/uploads/2018/09/five-feet-apart-9781534437333_hr-679x1024.jpg"}
+                 {:asin 21231 :imurl "https://lithub.com/wp-content/uploads/sites/3/2019/07/lady-in-the-lake1.jpg"}
+                 ])

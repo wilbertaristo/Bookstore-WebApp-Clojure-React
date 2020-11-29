@@ -55,3 +55,27 @@ body {
     margin-bottom: 0;
     width: 25%;
 }
+
+.book-metadatas .ant-input-disabled {
+    background-color: #fff;
+    cursor: default;
+    color: #303030;
+}
+
+.review-section .ant-list-vertical .ant-list-item-meta-avatar {
+    display: block;
+}
+
+.review-section .ant-list-vertical .ant-list-item-meta-title {
+    margin-bottom: 0;
+}
+
+.review-section .ant-input-disabled {
+    background-color: #fff;
+    cursor: default;
+    color: #303030;
+}
+
+.add-review-form .ant-form-item {
+    margin-bottom: 0;
+}

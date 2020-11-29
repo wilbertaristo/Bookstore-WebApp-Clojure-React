@@ -4,6 +4,7 @@
               [reagent.dom :as rd]
               [re-frame.core :as rf]
               [dbfrontend.library :as library]
+              [dbfrontend.viewbook :as viewbook]
               [dbfrontend.reframeevents :as reframe-events]
               [dbfrontend.login :as login]
               [dbfrontend.resetpassword :as resetpassword]
@@ -23,7 +24,7 @@
 
 (defonce start-library (do (rf/dispatch-sync [:initialize]) true))
 
-(render library/render)
+(render viewbook/render)
 
 (defn on-js-reload []
   ;; optionally touch your app-state to force rerendering depending on

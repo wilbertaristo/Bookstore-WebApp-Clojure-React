@@ -32,7 +32,7 @@
   [:div {:style {:width "40vw" :background-color "#f5f5f5"}}
    [:div.d-flex.flex-column.align-items-end.pr-4.pt-3 {:style {:height "2%" :background-color "#f5f5f5"}}
     [:span {:class-name "d-flex"} "Not a member?"
-     [:a {:class-name "d-flex ml-1" :href "/signup"} "Sign up now"]]
+     [:a {:class-name "d-flex ml-1" :href "/#/signup"} "Sign up now"]]
     ]
    [:div.d-flex.align-items-center.justify-content-center {:style {:height "98%"}}
     [:div.d-flex.flex-column {:style {:width "50%"}}

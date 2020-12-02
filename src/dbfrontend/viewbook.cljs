@@ -12,8 +12,8 @@
 (defn render-recommendation []
   [:div.d-flex.flex-wrap
    (for [book tableutils/image-urls]
-      [:a {:href (str "/view-book?asin=" (:asin book))}
-       [:img {:class-name "book-covers mr-2 mb-2" :src (:imurl book) :width "140px"}]
+      [:a {:href (str "/#/view-book/" (:asin book))}
+       [:img {:class-name "book-covers mr-2 mb-2" :src (:imurl book) :width "140px" :on-click #(rf/dispatch [:toggle-recommendation-modal])}]
        ]
      )
    ]
@@ -112,32 +112,45 @@
               }
    [render-addbook-form]])
 
-(defn render []
-  [ant/layout {:class-name "vh-100" :style {:background-color "#f0f2f5"}}
-    [library/render-nav-bar]
-    [ant/layout-content {:style {:margin "60px" :background-color "#fff"} :class-name "d-flex flex-row"}
-     [:div.p-5.d-flex.flex-row {:style {:width "65%"}}
-      [:div.pt-2.d-flex.flex-column
-       [:img {:src (:image selected_book) :width "410px"}]
-       ]
-      [:div.d-flex.flex-column.w-100.ml-5
-       [render-metadatas]
-       [recommendation-modal]
-       ]
-      ]
-     [:div.pt-3.pb-3
-      [ant/divider {:type "vertical" :class-name "h-100 m-0"}]
-      ]
-     [:div.p-5.d-flex.flex-row.h-100 {:style {:width "35%"}}
-      [:div.d-flex.flex-column.w-100.review-section
-       [:div.d-flex.flex-row.w-100.justify-content-between
-        [:h3 {:style {:color "#303030" :font-weight 500}} "Reviews"]
-        [:div.d-flex.justify-content-end
-         [ant/button {:class-name "mt-1" :type "primary" :on-click #(rf/dispatch [:toggle-addreview-modal])} "Add Review"]]
+(defn render-content [match]
+  (let [{:keys [path query]} (:parameters match)
+        {:keys [asin]} path]
+    (if (true? (:review query)) (rf/dispatch [:toggle-addreview-modal]))
+    [ant/layout {:class-name "vh-100" :style {:background-color "#f0f2f5"}}
+     [library/render-nav-bar]
+     [ant/layout-content {:style {:margin "60px" :background-color "#fff"} :class-name "d-flex flex-row"}
+      [:div.p-5.d-flex.flex-row {:style {:width "65%"}}
+       [:div.pt-2.d-flex.flex-column
+        [:img {:src (:image selected_book) :width "410px"}]
         ]
-       [ant/divider {:class-name "mt-2 mb-2"}]
-       [addreview-modal]
-       [render-reviews]
-       ]]
+       [:div.d-flex.flex-column.w-100.ml-5
+        [render-metadatas]
+        [recommendation-modal]
+        ]
+       ]
+      [:div.pt-3.pb-3
+       [ant/divider {:type "vertical" :class-name "h-100 m-0"}]
+       ]
+      [:div.p-5.d-flex.flex-row.h-100 {:style {:width "35%"}}
+       [:div.d-flex.flex-column.w-100.review-section
+        [:div.d-flex.flex-row.w-100.justify-content-between
+         [:h3 {:style {:color "#303030" :font-weight 500}} "Reviews"]
+         [:div.d-flex.justify-content-end
+          [ant/button {:class-name "mt-1" :type "primary" :on-click #(rf/dispatch [:toggle-addreview-modal])} "Add Review"]]
+         ]
+        [ant/divider {:class-name "mt-2 mb-2"}]
+        [addreview-modal]
+        [render-reviews]
+        ]]
+      ]
      ]
-   ])
+    )
+  )
+
+(defn render-loading []
+  [:div.d-flex.justify-content-center.align-items-center.w-100.vh-100
+   [ant/spin {:size "large"}]]
+  )
+
+(defn render [match]
+  (if selected_book (render-content match) (render-loading)))

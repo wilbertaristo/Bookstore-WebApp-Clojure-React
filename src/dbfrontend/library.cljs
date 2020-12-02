@@ -12,7 +12,7 @@
 
 (defn render-nav-bar []
    [ant/layout-header {:class-name "d-flex align-items-center"}
-    [:a {:href "/"}
+    [:a {:href "/#/library"}
 
      [:img {:src "sutdLogoWhite.png" :alt "SUTD LOGO" :class-name "menu-logo p-1"}]]
     [:div {:style {:width "90vw"}}]])
@@ -24,6 +24,7 @@
        [ant/table
         {:columns tableutils/columns
          :dataSource @data :pagination tableutils/pagination :row-key "id"
+         :loading @(rf/subscribe [:library-table-loading])
          }]])))
 
 (defn dispatch-addbook [errors values]

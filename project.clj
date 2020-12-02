@@ -9,6 +9,10 @@
   :dependencies [[org.clojure/clojure "1.10.0"]
                  [org.clojure/clojurescript "1.10.773"]
                  [org.clojure/core.async  "0.4.500"]
+                 [ring "1.8.1"]
+                 [metosin/reitit "0.5.10"]
+                 [metosin/reitit-spec "0.5.10"]
+                 [metosin/reitit-frontend "0.5.10"]
                  [reagent "0.10.0"]
                  [re-frame "1.1.2"]
                  [day8.re-frame/re-frame-10x "0.7.0"]
@@ -31,7 +35,7 @@
                            ;; in the default browser once Figwheel has
                            ;; started and compiled your application.
                            ;; Comment this out once it no longer serves you.
-                           :open-urls ["http://localhost:3449/index.html"]}
+                           :open-urls ["http://localhost:3449/"]}
 
                 :compiler {:main dbfrontend.core
                            :target :bundle
@@ -69,7 +73,7 @@
 
              ;; doesn't work for you just run your own server :) (see lein-ring)
 
-             ;; :ring-handler hello_world.server/handler
+             :ring-handler dbfrontend.routing/handler
 
              ;; To be able to open files in your editor from the heads up display
              ;; you will need to put a script on your path.

@@ -26,7 +26,7 @@
         ;; validates that the password field is not empty
         (ant/decorate-field login-antform "password" {:rules [{:required true :message "Please input your password!"}]}
                             [ant/input {:type "password" :placeholder "Password" :size "large" :prefix (reagent/as-element [ant/icon {:type "lock"}])}])]
-       [:a {:href "/reset-password" :style {:float "right" :margin-top "-10px" :color "gray"}} "Forgot Password?"]
+       [:a {:href "/#/reset-password" :style {:float "right" :margin-top "-10px" :color "gray"}} "Forgot Password?"]
        [ant/button {:type "primary" :html-type "submit" :size "large" :style {:margin-top "20px" :width "150px"}} "Sign In"]])))
 
 (defn login-form []
@@ -37,7 +37,7 @@
   [:div {:style {:width "40vw" :background-color "#f5f5f5"}}
    [:div.d-flex.flex-column.align-items-end.pr-4.pt-3 {:style {:height "2%" :background-color "#f5f5f5"}}
     [:span {:class-name "d-flex"} "Not a member?"
-     [:a {:class-name "d-flex ml-1" :href "/signup"} "Sign up now"]]
+     [:a {:class-name "d-flex ml-1" :href "/#/signup"} "Sign up now"]]
     ]
    [:div.d-flex.align-items-center.justify-content-center {:style {:height "98%"}}
     [:div.d-flex.flex-column {:style {:width "50%"}}

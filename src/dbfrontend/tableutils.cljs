@@ -24,13 +24,13 @@
 
 (defn cover-display [url book]
   (def book_asin (get (js->clj book) "asin"))
-  [:a {:href (str "/view-book?asin=" book_asin)}
+  [:a {:href (str "/#/view-book/" book_asin)}
    [:img {:class-name "book-covers" :src url :width "100px"}]
    ]
   )
 
 (defn action-display [asin]
-  [:a {:href (str "/view-book?asin=" asin)} "Write a review"])
+  [:a {:href (str "/#/view-book/" asin "?review=true")} "Write a review"])
 
 (def description
   "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Aliquam ultrices sagittis orci a scelerisque. Libero volutpat sed cras ornare arcu dui vivamus arcu felis. Erat nam at lectus urna duis convallis. Arcu ac tortor dignissim convallis aenean et tortor. Amet mauris commodo quis imperdiet massa tincidunt nunc pulvinar. Lectus nulla at volutpat diam ut. Elementum tempus egestas sed sed risus pretium quam. Sit amet venenatis urna cursus eget nunc scelerisque viverra. Sem et tortor consequat id.

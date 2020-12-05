@@ -11,6 +11,21 @@
    (:books db)))
 
 (rf/reg-sub
+  :selected-book
+ (fn [db _]
+   (:selected-book db)))
+
+(rf/reg-sub
+ :selected-book-reviews
+ (fn [db _]
+   (:selected-book-reviews db)))
+
+(rf/reg-sub
+ :related-books
+ (fn [db _]
+   (:related-books db)))
+
+(rf/reg-sub
  :modal-state
  (fn [db _]
    (:modal-state db)))
@@ -61,7 +76,10 @@
 (rf/reg-event-db
  :initialize
  (fn [_ _]
-   {:books tableutils/books
+   {:books nil
+    :selected-book nil
+    :selected-book-reviews nil
+    :related-books nil
     :modal-state false
     :addreview-modal-state false
     :recommendation-modal-state false
@@ -70,7 +88,7 @@
     :author-search ""
     :genre-search ""
     :file-list []
-    :library-table-loading false
+    :library-table-loading true
     }))
 
 (rf/reg-event-db
@@ -84,24 +102,39 @@
    (assoc db :books new-book-list)))
 
 (rf/reg-event-db
+ :update-selected-book
+ (fn [db [_ new-book]]
+   (assoc db :selected-book new-book)))
+
+(rf/reg-event-db
+ :update-selected-book-reviews
+ (fn [db [_ review-list]]
+   (assoc db :selected-book-reviews review-list)))
+
+(rf/reg-event-db
+ :update-related-books
+ (fn [db [_ new-book-list]]
+   (assoc db :related-books new-book-list)))
+
+(rf/reg-event-db
  :toggle-modal
- (fn [db]
-   (assoc db :modal-state (not (db :modal-state)))))
+ (fn [db [_ state]]
+   (assoc db :modal-state state)))
 
 (rf/reg-event-db
  :toggle-addreview-modal
- (fn [db]
-   (assoc db :addreview-modal-state (not (db :addreview-modal-state)))))
+ (fn [db [_ state]]
+   (assoc db :addreview-modal-state state)))
 
 (rf/reg-event-db
  :toggle-recommendation-modal
- (fn [db]
-   (assoc db :recommendation-modal-state (not (db :recommendation-modal-state)))))
+ (fn [db [_ state]]
+   (assoc db :recommendation-modal-state state)))
 
 (rf/reg-event-db
- :toggle-table-loading
- (fn [db]
-   (assoc db :library-table-loading (not (db :library-table-loading)))))
+ :set-table-loading
+ (fn [db [_ state]]
+   (assoc db :library-table-loading state)))
 
 (rf/reg-event-db
  :increment-id

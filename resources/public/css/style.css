@@ -76,6 +76,17 @@ body {
     color: #303030;
 }
 
+.review-section .ant-list-empty-text {
+    visibility: hidden;
+}
+
+.review-section .ant-list-empty-text:after {
+    content:'No Review Yet';
+    visibility: visible;
+    display: block;
+    font-size: 18px;
+}
+
 .add-review-form .ant-form-item {
     margin-bottom: 0;
 }

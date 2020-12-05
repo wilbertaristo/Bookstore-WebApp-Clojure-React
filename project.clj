@@ -13,6 +13,7 @@
                  [metosin/reitit "0.5.10"]
                  [metosin/reitit-spec "0.5.10"]
                  [metosin/reitit-frontend "0.5.10"]
+                 [cljs-http "0.1.46"]
                  [reagent "0.10.0"]
                  [re-frame "1.1.2"]
                  [day8.re-frame/re-frame-10x "0.7.0"]

@@ -1,9 +1,13 @@
 (ns ^:figwheel-hooks dbfrontend.library
+  (:require-macros [cljs.core.async.macros :refer [go]])
   (:require
     [reagent.core :as reagent]
     [reagent.dom :as rd]
     [antizer.reagent :as ant]
     [re-frame.core :as rf]
+    [clojure.string :as string]
+    [cljs-http.client :as http]
+    [cljs.core.async :refer [<!]]
     [dbfrontend.tableutils :as tableutils]))
 
 (enable-console-print!)
@@ -14,8 +18,21 @@
    [ant/layout-header {:class-name "d-flex align-items-center"}
     [:a {:href "/#/library"}
 
-     [:img {:src "sutdLogoWhite.png" :alt "SUTD LOGO" :class-name "menu-logo p-1"}]]
+     [:img {:src "sutdLogoWhite.png" :alt "SUTD LOGO" :class-name "menu-logo p-1" :on-click #(rf/dispatch [:update-related-books nil])}]]
     [:div {:style {:width "90vw"}}]])
+
+(defn fetch-books []
+  (println "fetching books")
+  (go (let [response (<! (http/post (str tableutils/ROOT_URL "/get_metadatas")
+                                   {:with-credentials? false
+                                    :json-params {:skip 5 :limit 30}}))]
+        (def book-response (.-body (.parse js/JSON (:body response))))
+        (println book-response)
+        (rf/dispatch [:update-books book-response])
+        (rf/dispatch [:set-table-loading false])
+        )
+      )
+  )
 
 (defn datatable []
   (let [data (rf/subscribe [:books])]
@@ -23,7 +40,7 @@
       [:div
        [ant/table
         {:columns tableutils/columns
-         :dataSource @data :pagination tableutils/pagination :row-key "id"
+         :dataSource @data :pagination tableutils/pagination :row-key "asin"
          :loading @(rf/subscribe [:library-table-loading])
          }]])))
 
@@ -39,7 +56,7 @@
 ;  (if (nil? errors)
 ;    (rf/dispatch [:add-book (js->clj new-book)]))
 ;  (rf/dispatch [:increment-id])
-;  (rf/dispatch [:toggle-modal])
+;  (rf/dispatch [:toggle-modal false])
   )
 
 (defn upload-image-button []
@@ -93,7 +110,7 @@
 
 (defn addbook-modal []
   [ant/modal {:title "Add Book" :visible @(rf/subscribe [:modal-state])
-              :onCancel #(rf/dispatch [:toggle-modal])
+              :onCancel #(rf/dispatch [:toggle-modal false])
               :footer nil}
    [render-addbook-form]])
 
@@ -107,10 +124,28 @@
     :else nil)
   )
 
+(defn capitalize-words [s]
+  (->> (string/split (str s) #"\b")
+       (map string/capitalize)
+       string/join))
+
 (defn handle-search []
-  (println @(rf/subscribe [:title-search]))
-  (println @(rf/subscribe [:author-search]))
-  (println @(rf/subscribe [:genre-search]))
+  (rf/dispatch [:set-table-loading true])
+  (go (let [response (<! (http/post (str tableutils/ROOT_URL "/get_metadatas")
+                                    {:with-credentials? false
+                                     :json-params {:skip 0
+                                                   :limit 100
+                                                   :category (capitalize-words @(rf/subscribe [:genre-search]))
+                                                   :title (capitalize-words @(rf/subscribe [:title-search]))
+                                                   :author (capitalize-words @(rf/subscribe [:author-search]))
+                                                   }
+                                     }))]
+        (def search-response (.-body (.parse js/JSON (:body response))))
+        (println search-response)
+        (rf/dispatch [:update-books search-response])
+        (rf/dispatch [:set-table-loading false])
+        )
+      )
   )
 
 (defn filter-form []
@@ -138,13 +173,14 @@
     [:div {:style {:width "18%"}}]
     [:h3 {:style {:color "dimgray" :letter-spacing "2px"}} "LIBRARY"]
     [:div.mr-5
-     [ant/button {:class-name "mr-3" :size "large" :type "primary" :on-click #(rf/dispatch [:toggle-modal])} "Add Book"]]]
+     [ant/button {:class-name "mr-3" :size "large" :type "primary" :on-click #(rf/dispatch [:toggle-modal true])} "Add Book"]]]
    [ant/divider]
    [render-filter-form]
    ]
   )
 
 (defn render []
+  (fetch-books)
   [ant/layout {:class-name "vh-100"}
    [render-nav-bar]
    [:div.w-100.d-flex.justify-content-center.align-items-center {:style {:background-color "#f0f2f5"}}

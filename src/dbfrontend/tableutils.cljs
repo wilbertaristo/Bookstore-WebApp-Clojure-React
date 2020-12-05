@@ -2,7 +2,12 @@
   (:require
     [reagent.core :as reagent]
     [reagent.dom :as rd]
-    [antizer.reagent :as ant]))
+    [antizer.reagent :as ant]
+    ))
+
+(def ROOT_URL "https://serene-eyrie-55619.herokuapp.com/http://ec2-35-174-207-34.compute-1.amazonaws.com:8000/api")
+
+(def REVIEWS_URL "https://serene-eyrie-55619.herokuapp.com/http://ec2-54-90-1-150.compute-1.amazonaws.com:7000/api")
 
 (def form-style {:label-col {:span 6}
                  :wrapper-col {:span 13}})
@@ -16,8 +21,9 @@
            (get (js->clj data2 :keywordize-keys true) field)))
 
 (defn genre-display [genres]
-  (.sort genres)
-  (for [i (range (count genres))] (reagent/as-element [ant/tag {:key (aget genres i)} (aget genres i)])))
+  (def sorted (.sort (clj->js (distinct (js->clj genres)))))
+;  (.sort genres)
+  (for [i (range (count sorted))] (reagent/as-element [ant/tag {:key (aget sorted i) :class-name "mb-2"} (aget sorted i)])))
 
 (defn review-display [review]
   [ant/rate {:allowHalf true :disabled true :default-value review}])
@@ -40,11 +46,11 @@
 
 (def review-text "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Curabitur mollis tortor sem, at sagittis nunc eleifend vel. Mauris laoreet, odio nec mattis venenatis, mauris felis efficitur urna, et eleifend ipsum dui vel ligula. Fusce vitae scelerisque magna, a convallis odio. ")
 
-(def columns [{:title "Cover" :width 150 :dataIndex "image" :render #(reagent/as-element (cover-display % %2))}
-              {:title "Author" :dataIndex "author" :sorter #(comparison %1 %2 :author)}
-              {:title "Title" :dataIndex "title" :sorter #(comparison %1 %2 :title)}
-              {:title "Genre" :dataIndex "genre" :render #(reagent/as-element (genre-display %))}
-              {:title "Review" :dataIndex "review" :sorter #(comparison %1 %2 :review) :render #(reagent/as-element (review-display %))}
+(def columns [{:title "Cover" :width 150 :dataIndex "imUrl" :render #(reagent/as-element (cover-display % %2))}
+;              {:title "Author" :dataIndex "author" :sorter #(comparison %1 %2 :author)}
+;              {:title "Title" :dataIndex "title" :sorter #(comparison %1 %2 :title)}
+              {:title "Categories" :width 1400 :dataIndex "categories" :render #(reagent/as-element (genre-display %))}
+;              {:title "Review" :dataIndex "review" :sorter #(comparison %1 %2 :review) :render #(reagent/as-element (review-display %))}
               {:title "Action" :dataIndex "asin" :render #(reagent/as-element (action-display %))}
               ])
 

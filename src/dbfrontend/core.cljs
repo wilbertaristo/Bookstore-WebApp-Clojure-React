@@ -41,7 +41,7 @@
     ["/library" {:name ::library
                  :view library/render}]
     ["/view-book/:asin" {:name ::viewbook
-                         :parameters {:path {:asin int?}
+                         :parameters {:path {:asin string?}
                                       :query {(ds/opt :review) boolean?}}
                          :view viewbook/render}]
     ]

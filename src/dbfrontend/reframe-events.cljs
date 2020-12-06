@@ -69,6 +69,16 @@
  :library-table-loading
  (fn [db _]
    (:library-table-loading db)))
+
+(rf/reg-sub
+ :login-button-loading
+ (fn [db _]
+   (:login-button-loading db)))
+
+(rf/reg-sub
+ :login-error
+ (fn [db _]
+   (:login-error db)))
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 
@@ -89,6 +99,8 @@
     :genre-search ""
     :file-list []
     :library-table-loading true
+    :login-button-loading false
+    :login-error false
     }))
 
 (rf/reg-event-db
@@ -130,6 +142,16 @@
  :set-table-loading
  (fn [db [_ state]]
    (assoc db :library-table-loading state)))
+
+(rf/reg-event-db
+ :set-login-button-loading
+ (fn [db [_ state]]
+   (assoc db :login-button-loading state)))
+
+(rf/reg-event-db
+ :set-login-error
+ (fn [db [_ state]]
+   (assoc db :login-error state)))
 
 (rf/reg-event-db
  :increment-id

@@ -2,6 +2,7 @@
   (:require
     [reagent.core :as reagent]
     [reagent.dom :as rd]
+    [re-frame.core :as rf]
     [antizer.reagent :as ant]))
 
 (defn login-banner []
@@ -10,9 +11,18 @@
     [:h1 {:style {:font-size "40px" :color "white" :text-shadow "0px 0px 5px black" :text-align "right"}} "Discover the reading sanctuary."]]])
 
 (defn launch-auth [errors values]
-  (if (nil? errors)
-    (println (get (js->clj values) "email"))
-    (println errors)))
+  (rf/dispatch [:set-login-error false])
+  (rf/dispatch [:set-login-button-loading true])
+  (if errors
+    (println errors)
+    (if (and (= "wilbert.aristo@hotmail.com" (.-email values)) (= "password" (.-password values)))
+      (do
+        (js/setTimeout #((set! (.. js/window -location -href) "/#/library")) 3500)
+        )
+      (js/setTimeout #((do (rf/dispatch [:set-login-error true]) (rf/dispatch [:set-login-button-loading false]))) 1500)
+      )
+    )
+  )
 
 (defn ant-form []
   (fn [props]
@@ -27,7 +37,7 @@
         (ant/decorate-field login-antform "password" {:rules [{:required true :message "Please input your password!"}]}
                             [ant/input {:type "password" :placeholder "Password" :size "large" :prefix (reagent/as-element [ant/icon {:type "lock"}])}])]
        [:a {:href "/#/reset-password" :style {:float "right" :margin-top "-10px" :color "gray"}} "Forgot Password?"]
-       [ant/button {:type "primary" :html-type "submit" :size "large" :style {:margin-top "20px" :width "150px"}} "Sign In"]])))
+       [ant/button {:type "primary" :html-type "submit" :size "large" :style {:margin-top "20px" :width "150px"} :loading @(rf/subscribe [:login-button-loading])} "Sign In"]])))
 
 (defn login-form []
   (ant/create-form (ant-form))
@@ -43,6 +53,9 @@
     [:div.d-flex.flex-column {:style {:width "50%"}}
      [:h2 {:style {:font-weight "600" :margin-bottom "-15px"}} "Sign In"]
      [ant/divider]
+     (if @(rf/subscribe [:login-error])
+       [ant/alert {:message "Login Error" :description "Incorrect email or password!" :type "error" :class-name "mb-3"}]
+       )
      [login-form]]
     ]
    ])

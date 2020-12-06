@@ -29,12 +29,19 @@
 
 (def random_book {:id 13 :asin 12345 :image "https://zos.alipayobjects.com/rmsportal/jkjgkEfvpUPVyRjUImniVslZfWPnJuuZ.png" :author "BANG JAGO" :title "AMPUN BANG" :genre ["Drama"] :review 2 :description "SORRY BANG JAGO AMPUN BANG JAGO"})
 
+(defn handle-logout []
+  (rf/dispatch [:set-login-button-loading false])
+  (js/setTimeout #((set! (.. js/window -location -href) "/#/login")) 500)
+  )
+
 (defn render-nav-bar []
    [ant/layout-header {:class-name "d-flex align-items-center"}
     [:a {:href "/#/library"}
 
      [:img {:src "sutdLogoWhite.png" :alt "SUTD LOGO" :class-name "menu-logo p-1" :on-click #(rf/dispatch [:update-related-books nil])}]]
-    [:div {:style {:width "90vw"}}]])
+    [:div.d-flex.align-items-center.justify-content-end {:style {:width "90vw"}}
+      [ant/button {:type "ghost" :on-click handle-logout :style {:color "white"}} "Log Out"]
+     ]])
 
 (defn fetch-ratings [asinList]
   (println "fetching ratings")

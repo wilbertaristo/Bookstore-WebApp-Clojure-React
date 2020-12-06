@@ -12,7 +12,7 @@
 
 (enable-console-print!)
 
-(defn log_request [type code]
+(defn log-request [type code]
   (go (let [response (<! (http/post (str tableutils/ROOT_URL "/create_log")
                                     {:with-credentials? false
                                      :json-params {:timestamp (.floor js/Math (/(.getTime (js/Date.)) 1000))
@@ -44,6 +44,7 @@
         (def ratings-response (.-body (.parse js/JSON (:body response))))
         (println ratings-response)
         (rf/dispatch [:update-book-reviews ratings-response])
+        (log-request "post" (.-status (.parse js/JSON (:body response))))
         )
       )
   )
@@ -58,6 +59,7 @@
         (rf/dispatch [:update-books (.-bookList book-response)])
 ;        (fetch-ratings (.-asinList book-response)) ;; TODO -> Ask Daryll to give asinList in the response
         (rf/dispatch [:set-table-loading false])
+        (log-request "post" (.-status (.parse js/JSON (:body response))))
         )
       )
   )
@@ -89,6 +91,7 @@
           (def new-book-library (.concat @(rf/subscribe [:books]) (array create-book-response)))
           (rf/dispatch [:update-books new-book-library])
           (rf/dispatch [:set-table-loading false])
+          (log-request "post" (.-status (.parse js/JSON (:body response))))
           )
         )
     (println errors)
@@ -184,6 +187,7 @@
         (println search-response)
         (rf/dispatch [:update-books (.-bookList search-response)])
         (rf/dispatch [:set-table-loading false])
+        (log-request "post" (.-status (.parse js/JSON (:body response))))
         )
       )
   )

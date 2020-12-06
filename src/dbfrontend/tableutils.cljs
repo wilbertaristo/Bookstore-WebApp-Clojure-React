@@ -38,6 +38,12 @@
 (defn action-display [asin]
   [:a {:href (str "/#/view-book/" asin "?review=true")} "Write a review"])
 
+(defn price-display [price]
+  (if (= price nil)
+    (str "-")
+    (str "$ " price)
+    ))
+
 (def description
   "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Aliquam ultrices sagittis orci a scelerisque. Libero volutpat sed cras ornare arcu dui vivamus arcu felis. Erat nam at lectus urna duis convallis. Arcu ac tortor dignissim convallis aenean et tortor. Amet mauris commodo quis imperdiet massa tincidunt nunc pulvinar. Lectus nulla at volutpat diam ut. Elementum tempus egestas sed sed risus pretium quam. Sit amet venenatis urna cursus eget nunc scelerisque viverra. Sem et tortor consequat id.
   Sit amet consectetur adipiscing elit pellentesque. Adipiscing enim eu turpis egestas pretium. Vulputate dignissim suspendisse in est. Dolor sit amet consectetur adipiscing. Justo donec enim diam vulputate ut pharetra sit amet aliquam. Vitae justo eget magna fermentum iaculis eu non diam. Aliquam sem et tortor consequat id porta nibh venenatis. Nunc pulvinar sapien et ligula ullamcorper malesuada proin. A lacus vestibulum sed arcu. Lacus suspendisse faucibus interdum posuere lorem ipsum dolor. Aliquam ultrices sagittis orci a scelerisque purus semper eget duis. Vitae justo eget magna fermentum iaculis eu non diam. Phasellus faucibus scelerisque eleifend donec. Dui vivamus arcu felis bibendum ut. Tristique senectus et netus et malesuada fames. Dui faucibus in ornare quam viverra.
@@ -47,11 +53,12 @@
 (def review-text "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Curabitur mollis tortor sem, at sagittis nunc eleifend vel. Mauris laoreet, odio nec mattis venenatis, mauris felis efficitur urna, et eleifend ipsum dui vel ligula. Fusce vitae scelerisque magna, a convallis odio. ")
 
 (def columns [{:title "Cover" :width 150 :dataIndex "imUrl" :render #(reagent/as-element (cover-display % %2))}
-;              {:title "Author" :dataIndex "author" :sorter #(comparison %1 %2 :author)}
-;              {:title "Title" :dataIndex "title" :sorter #(comparison %1 %2 :title)}
-              {:title "Categories" :width 1400 :dataIndex "categories" :render #(reagent/as-element (genre-display %))}
+              {:title "Author" :width 170 :dataIndex "author" :sorter #(comparison %1 %2 :author)}
+              {:title "Title" :width 250 :dataIndex "title" :sorter #(comparison %1 %2 :title)}
+              {:title "Price" :width 100 :dataIndex "price" :sorter #(comparison %1 %2 :price) :render #(price-display %)}
+              {:title "Categories" :dataIndex "categories" :render #(reagent/as-element (genre-display %))}
 ;              {:title "Review" :dataIndex "review" :sorter #(comparison %1 %2 :review) :render #(reagent/as-element (review-display %))}
-              {:title "Action" :dataIndex "asin" :render #(reagent/as-element (action-display %))}
+              {:title "Action" :width 170 :dataIndex "asin" :render #(reagent/as-element (action-display %))}
               ])
 
 (def books [{:id 1 :asin 12345 :image "https://zos.alipayobjects.com/rmsportal/jkjgkEfvpUPVyRjUImniVslZfWPnJuuZ.png" :author "Tracey Davidson" :title "Paris In The Rain" :genre ["Romance" "Horror"] :review 5 :description description}

@@ -12,6 +12,21 @@
 
 (enable-console-print!)
 
+(defn log_request [type code]
+  (go (let [response (<! (http/post (str tableutils/ROOT_URL "/create_log")
+                                    {:with-credentials? false
+                                     :json-params {:timestamp (.floor js/Math (/(.getTime (js/Date.)) 1000))
+                                                   :type type
+                                                   :code code
+                                                   }
+                                     }
+                                    ))]
+        (def log-response (.-body (.parse js/JSON (:body response))))
+        (println log-response)
+        )
+      )
+  )
+
 (def random_book {:id 13 :asin 12345 :image "https://zos.alipayobjects.com/rmsportal/jkjgkEfvpUPVyRjUImniVslZfWPnJuuZ.png" :author "BANG JAGO" :title "AMPUN BANG" :genre ["Drama"] :review 2 :description "SORRY BANG JAGO AMPUN BANG JAGO"})
 
 (defn render-nav-bar []
@@ -21,14 +36,27 @@
      [:img {:src "sutdLogoWhite.png" :alt "SUTD LOGO" :class-name "menu-logo p-1" :on-click #(rf/dispatch [:update-related-books nil])}]]
     [:div {:style {:width "90vw"}}]])
 
+(defn fetch-ratings [asinList]
+  (println "fetching ratings")
+  (go (let [response (<! (http/post (str tableutils/REVIEWS_URL "/get_ratings") ;; TODO -> Ask Daryll to create this API
+                                    {:with-credentials? false
+                                     :json-params {:asinList asinList}}))]
+        (def ratings-response (.-body (.parse js/JSON (:body response))))
+        (println ratings-response)
+        (rf/dispatch [:update-book-reviews ratings-response])
+        )
+      )
+  )
+
 (defn fetch-books []
   (println "fetching books")
   (go (let [response (<! (http/post (str tableutils/ROOT_URL "/get_metadatas")
                                    {:with-credentials? false
-                                    :json-params {:skip 5 :limit 30}}))]
+                                    :json-params {:skip 5 :limit 200}}))]
         (def book-response (.-body (.parse js/JSON (:body response))))
-        (println book-response)
-        (rf/dispatch [:update-books book-response])
+        (println (.-asinList book-response))
+        (rf/dispatch [:update-books (.-bookList book-response)])
+;        (fetch-ratings (.-asinList book-response)) ;; TODO -> Ask Daryll to give asinList in the response
         (rf/dispatch [:set-table-loading false])
         )
       )
@@ -45,18 +73,27 @@
          }]])))
 
 (defn dispatch-addbook [errors values]
-  (println (get @(rf/subscribe [:file-list]) 0))
-  (println values)
-;  (def new-book values)
-;  (aset values "genre" (.split (get (js->clj values) "genre") " "))
-;  (aset values "id" @(rf/subscribe [:book-id]))
-;  (aset values "asin" 12345)
-;  (aset values "review" 0)
-;  (println new-book)
-;  (if (nil? errors)
-;    (rf/dispatch [:add-book (js->clj new-book)]))
-;  (rf/dispatch [:increment-id])
-;  (rf/dispatch [:toggle-modal false])
+  (if (nil? errors)
+    (go (let [response (<! (http/post (str tableutils/ROOT_URL "/create_book")
+                                      {:with-credentials? false
+                                       :json-params {:title (.-title values)
+                                                     :author (.-author values)
+                                                     :description (.-description values)
+                                                     :price (.-price values)
+                                                     :imUrl "https://static-cse.canva.com/blob/142533/Red-and-Beige-Cute-Illustration-Young-Adult-Book-Cover.jpg"
+                                                     :categories (array (.-genre1 values) (.-genre2 values) (.-genre3 values) (.-genre4 values))
+                                                     }
+                                       }
+                                      ))]
+          (def create-book-response (.-body (.parse js/JSON (:body response))))
+          (def new-book-library (.concat @(rf/subscribe [:books]) (array create-book-response)))
+          (rf/dispatch [:update-books new-book-library])
+          (rf/dispatch [:set-table-loading false])
+          )
+        )
+    (println errors)
+    )
+  (rf/dispatch [:toggle-modal false])
   )
 
 (defn upload-image-button []
@@ -80,6 +117,9 @@
        [ant/form-item
         (ant/decorate-field addbook-antform "author" {:rules [{:required true :message "Enter author!"}]}
                             [ant/input {:placeholder "Author"}])]
+       [ant/form-item
+        (ant/decorate-field addbook-antform "price" {:rules [{:required true :message "Enter price!"}]}
+                            [ant/input {:placeholder "Price"}])]
        [ant/input-group
         [ant/col {:span 6}
          [ant/form-item
@@ -102,7 +142,7 @@
                             [ant/input {:placeholder "Description"}])]
        [ant/upload {:before-upload handle-book-before-upload :on-remove handle-book-upload-onremove :accept ".png,.jpeg,.jpg" :file-list @(rf/subscribe [:file-list]) :list-type "picture"} [upload-image-button]]
        [:div.d-flex.justify-content-end
-        [ant/button {:type "primary" :html-type "submit" :size "large" :style {:margin-top "20px" :width "150px"}} "Add Book"]
+        [ant/button {:type "primary" :html-type "submit" :size "large" :style {:margin-top "20px" :width "150px"} :on-click #(rf/dispatch [:set-table-loading true])} "Add Book"]
        ]])))
 
 (defn render-addbook-form []
@@ -134,7 +174,7 @@
   (go (let [response (<! (http/post (str tableutils/ROOT_URL "/get_metadatas")
                                     {:with-credentials? false
                                      :json-params {:skip 0
-                                                   :limit 100
+                                                   :limit 200
                                                    :category (capitalize-words @(rf/subscribe [:genre-search]))
                                                    :title (capitalize-words @(rf/subscribe [:title-search]))
                                                    :author (capitalize-words @(rf/subscribe [:author-search]))
@@ -142,7 +182,7 @@
                                      }))]
         (def search-response (.-body (.parse js/JSON (:body response))))
         (println search-response)
-        (rf/dispatch [:update-books search-response])
+        (rf/dispatch [:update-books (.-bookList search-response)])
         (rf/dispatch [:set-table-loading false])
         )
       )
@@ -180,7 +220,7 @@
   )
 
 (defn render []
-  (fetch-books)
+  (if (not @(rf/subscribe [:books])) (fetch-books))
   [ant/layout {:class-name "vh-100"}
    [render-nav-bar]
    [:div.w-100.d-flex.justify-content-center.align-items-center {:style {:background-color "#f0f2f5"}}

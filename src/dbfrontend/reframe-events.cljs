@@ -92,11 +92,6 @@
     }))
 
 (rf/reg-event-db
- :add-book
- (fn [db [_ new-book]]
-   (conj (db :books) new-book)))
-
-(rf/reg-event-db
  :update-books
  (fn [db [_ new-book-list]]
    (assoc db :books new-book-list)))

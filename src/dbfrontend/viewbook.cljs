@@ -133,6 +133,7 @@
           (println create-review-response)
           (fetch-reviews (.-asin create-review-response))
           (rf/dispatch [:toggle-addreview-modal false])
+          (ant/message-success "Review Added Successfully")
           (library/log-request "post" (.-status (.parse js/JSON (:body response))))
           )
         )

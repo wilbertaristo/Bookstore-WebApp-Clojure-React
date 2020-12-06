@@ -98,6 +98,7 @@
           (def new-book-library (.concat @(rf/subscribe [:books]) (array create-book-response)))
           (rf/dispatch [:update-books new-book-library])
           (rf/dispatch [:set-table-loading false])
+          (ant/message-success "Book Added Successfully")
           (log-request "post" (.-status (.parse js/JSON (:body response))))
           )
         )

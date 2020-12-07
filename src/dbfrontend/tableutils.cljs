@@ -5,6 +5,8 @@
     [antizer.reagent :as ant]
     ))
 
+(def proxy_url "https://serene-eyrie-55619.herokuapp.com/")
+
 (def ROOT_URL "https://serene-eyrie-55619.herokuapp.com/http://ec2-35-174-207-34.compute-1.amazonaws.com:8000/api")
 
 (def REVIEWS_URL "https://serene-eyrie-55619.herokuapp.com/http://ec2-54-90-1-150.compute-1.amazonaws.com:7000/api")

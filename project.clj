@@ -17,6 +17,7 @@
                  [reagent "0.10.0"]
                  [re-frame "1.1.2"]
                  [day8.re-frame/re-frame-10x "0.7.0"]
+                 [lynxeyes/dotenv "1.1.0"]
                  [antizer "0.3.1"]]
 
   :plugins [[lein-figwheel "0.5.20"]
@@ -36,7 +37,7 @@
                            ;; in the default browser once Figwheel has
                            ;; started and compiled your application.
                            ;; Comment this out once it no longer serves you.
-                           :open-urls ["http://localhost:3449/"]}
+                           :open-urls ["http://localhost:3000/"]}
 
                 :compiler {:main dbfrontend.core
                            :target :bundle
@@ -60,7 +61,7 @@
                            :pretty-print false}}]}
 
   :figwheel {:http-server-root "public" ;; default and assumes "resources"
-             ;; :server-port 3449 ;; default
+             :server-port 3000 ;; default 3449
              ;; :server-ip "127.0.0.1"
 
              :css-dirs ["resources/public/css"] ;; watch and update CSS

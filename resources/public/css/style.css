@@ -90,3 +90,13 @@ body {
 .add-review-form .ant-form-item {
     margin-bottom: 0;
 }
+
+::-webkit-scrollbar {
+    width: 8px;
+    height: 7px
+}
+::-webkit-scrollbar-thumb {
+    background-color: #c1c1c1;
+    border-radius: 4px;
+}
+

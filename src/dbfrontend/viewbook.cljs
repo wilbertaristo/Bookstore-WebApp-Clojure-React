@@ -1,5 +1,8 @@
 (ns dbfrontend.viewbook
-  (:require-macros [cljs.core.async.macros :refer [go]])
+  (:require-macros
+    [cljs.core.async.macros :refer [go]]
+    [dbfrontend.macro :as macro]
+    )
   (:require
     [reagent.core :as reagent]
     [reagent.dom :as rd]
@@ -13,7 +16,7 @@
 (def selected_book {:id 13 :asin 12345 :image "https://d1csarkz8obe9u.cloudfront.net/posterpreviews/action-thriller-book-cover-design-template-3675ae3e3ac7ee095fc793ab61b812cc_screen.jpg?ts=1588152105" :author "Nora Barrett" :title "The King Of Drugs" :genre ["Documentary", "Mystery"] :review 4.5 :totalReviews 1874 :description tableutils/description})
 
 (defn fetch-selected-book [asin]
-  (go (let [response (<! (http/post (str tableutils/ROOT_URL "/get_metadata")
+  (go (let [response (<! (http/post (str tableutils/proxy_url (macro/metadata_url) "/api/get_metadata")
                                     {:with-credentials? false
                                      :json-params {:asin asin}}))]
         (def book-response (.-body (.parse js/JSON (:body response))))
@@ -25,7 +28,7 @@
   )
 
 (defn fetch-related-books [asin]
-  (go (let [response (<! (http/post (str tableutils/ROOT_URL "/related_images")
+  (go (let [response (<! (http/post (str tableutils/proxy_url (macro/metadata_url) "/api/related_images")
                                     {:with-credentials? false
                                      :json-params {:asin asin}}))]
         (def related-response (.-body (.parse js/JSON (:body response))))
@@ -37,7 +40,7 @@
   )
 
 (defn fetch-reviews [asin]
-  (go (let [response (<! (http/post (str tableutils/REVIEWS_URL "/get_reviews")
+  (go (let [response (<! (http/post (str tableutils/proxy_url (macro/review_url) "/api/get_reviews")
                                     {:with-credentials? false
                                      :json-params {:asin asin :max 100}}))]
         (def review-response (.-body (.parse js/JSON (:body response))))
@@ -115,7 +118,7 @@
 
 (defn dispatch-addreview [errors values]
   (if (nil? errors)
-    (go (let [response (<! (http/post (str tableutils/REVIEWS_URL "/create_review")
+    (go (let [response (<! (http/post (str tableutils/proxy_url (macro/review_url) "/api/create_review")
                                       {:with-credentials? false
                                        :json-params {:asin   (.-asin @(rf/subscribe [:selected-book]))
                                                      :overall (.-rating values)
@@ -261,6 +264,7 @@
   [:div.d-flex.justify-content-center.align-items-center.w-100.vh-100.mt-3
    [ant/spin {:size "large"}]]
   )
+
 
 (defn check-render [asin]
   (if (= nil @(rf/subscribe [:selected-book])) false (= asin (.-asin @(rf/subscribe [:selected-book]))))

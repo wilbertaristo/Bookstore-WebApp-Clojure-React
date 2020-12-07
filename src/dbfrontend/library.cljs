@@ -1,5 +1,8 @@
 (ns ^:figwheel-hooks dbfrontend.library
-  (:require-macros [cljs.core.async.macros :refer [go]])
+  (:require-macros
+    [cljs.core.async.macros :refer [go]]
+    [dbfrontend.macro :as macro]
+    )
   (:require
     [reagent.core :as reagent]
     [reagent.dom :as rd]
@@ -13,7 +16,7 @@
 (enable-console-print!)
 
 (defn log-request [type code]
-  (go (let [response (<! (http/post (str tableutils/ROOT_URL "/create_log")
+  (go (let [response (<! (http/post (str tableutils/proxy_url (macro/metadata_url) "/api/create_log")
                                     {:with-credentials? false
                                      :json-params {:timestamp (.floor js/Math (/(.getTime (js/Date.)) 1000))
                                                    :type type
@@ -45,7 +48,7 @@
 
 (defn fetch-ratings [asinList]
   (println "fetching ratings")
-  (go (let [response (<! (http/post (str tableutils/REVIEWS_URL "/get_ratings") ;; TODO -> Ask Daryll to create this API
+  (go (let [response (<! (http/post (str tableutils/proxy_url (macro/review_url) "/api/get_ratings") ;; TODO -> Ask Daryll to create this API
                                     {:with-credentials? false
                                      :json-params {:asinList asinList}}))]
         (def ratings-response (.-body (.parse js/JSON (:body response))))
@@ -58,7 +61,7 @@
 
 (defn fetch-books []
   (println "fetching books")
-  (go (let [response (<! (http/post (str tableutils/ROOT_URL "/get_metadatas")
+  (go (let [response (<! (http/post (str tableutils/proxy_url (macro/metadata_url) "/api/get_metadatas")
                                    {:with-credentials? false
                                     :json-params {:skip 5 :limit 200}}))]
         (def book-response (.-body (.parse js/JSON (:body response))))
@@ -83,7 +86,7 @@
 
 (defn dispatch-addbook [errors values]
   (if (nil? errors)
-    (go (let [response (<! (http/post (str tableutils/ROOT_URL "/create_book")
+    (go (let [response (<! (http/post (str tableutils/proxy_url (macro/metadata_url) "/api/create_book")
                                       {:with-credentials? false
                                        :json-params {:title (.-title values)
                                                      :author (.-author values)
@@ -182,7 +185,7 @@
 
 (defn handle-search []
   (rf/dispatch [:set-table-loading true])
-  (go (let [response (<! (http/post (str tableutils/ROOT_URL "/get_metadatas")
+  (go (let [response (<! (http/post (str tableutils/proxy_url (macro/metadata_url) "/api/get_metadatas")
                                     {:with-credentials? false
                                      :json-params {:skip 0
                                                    :limit 200

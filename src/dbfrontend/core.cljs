@@ -1,4 +1,5 @@
 (ns dbfrontend.core
+  (:require-macros [dbfrontend.macro])
   (:require
     [reagent.core :as reagent]
     [reagent.dom :as rd]
@@ -17,6 +18,9 @@
     [dbfrontend.reviews :as reviews]))
 
 (enable-console-print!)
+
+(println (dbfrontend.macro/metadata_url))
+(println (dbfrontend.macro/review_url))
 
 (defonce start-library (do (rf/dispatch-sync [:initialize]) true))
 

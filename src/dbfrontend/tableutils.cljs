@@ -59,7 +59,7 @@
               {:title "Title" :width 250 :dataIndex "title" :sorter #(comparison %1 %2 :title)}
               {:title "Price" :width 100 :dataIndex "price" :sorter #(comparison %1 %2 :price) :render #(price-display %)}
               {:title "Categories" :dataIndex "categories" :render #(reagent/as-element (genre-display %))}
-;              {:title "Review" :dataIndex "review" :sorter #(comparison %1 %2 :review) :render #(reagent/as-element (review-display %))}
+              {:title "Review" :width 190 :dataIndex "avgReview" :sorter #(comparison %1 %2 :avgReview) :render #(reagent/as-element (review-display %))}
               {:title "Action" :width 170 :dataIndex "asin" :render #(reagent/as-element (action-display %))}
               ])
 
